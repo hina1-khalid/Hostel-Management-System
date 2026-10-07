@@ -1,0 +1,50 @@
+# Run everything with one command:   docker compose up --build
+#   App:  http://localhost:8080      API: http://localhost:5000/api/health      API docs: http://localhost:5000/api/docs
+# First time only, load demo data:   docker compose run --rm backend npm run seed
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      PORT: 5000
+      MONGO_URI: mongodb://mongo:27017/hostel_management
+      JWT_SECRET: ${JWT_SECRET:?Create a .env file next to docker-compose.yml with JWT_SECRET=<long random text>}
+      CLIENT_URL: http://localhost:8080
+      APP_TIMEZONE: Asia/Karachi
+      # optional features (leave empty to switch off)
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      MAIL_FROM: ${MAIL_FROM:-}
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:5000/api
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  mongo-data:

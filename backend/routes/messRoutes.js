@@ -1,0 +1,16 @@
+const router = require("express").Router();
+const c = require("../controllers/messController");
+const { protect, authorize } = require("../middleware/authMiddleware");
+const A = authorize("admin", "superadmin"), S = authorize("student");
+router.get("/menu", protect, c.getMenu);
+router.put("/menu", protect, A, c.setMenu);
+router.post("/meals", protect, S, c.bookMeal);
+router.get("/meals/me", protect, S, c.getMyMeals);
+router.get("/meals", protect, A, c.getMealRoster);
+router.put("/meals/taken", protect, A, c.markMealsTaken);
+router.route("/feedback").post(protect, S, c.submitFeedback).get(protect, A, c.getFeedback);
+router.post("/bills/generate", protect, A, c.generateBills);
+router.get("/bills", protect, A, c.getBills);
+router.get("/bills/me", protect, S, c.getMyBills);
+router.post("/bills/:id/pay", protect, A, c.payBill);
+module.exports = router;

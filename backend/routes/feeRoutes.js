@@ -1,0 +1,13 @@
+const router = require("express").Router();
+const c = require("../controllers/feeController");
+const { protect, authorize } = require("../middleware/authMiddleware");
+const { validate } = require("../utils/validate");
+const v = require("../validation/schemas");
+const A = authorize("admin", "superadmin");
+router.route("/").get(protect, A, c.getFees).post(protect, A, validate(v.createFee), c.createFee);
+router.get("/me", protect, authorize("student"), c.getMyFees);
+router.get("/:id/receipt", protect, c.downloadReceipt);
+router.post("/generate-monthly", protect, A, c.generateMonthly);
+router.route("/:id").get(protect, c.getFeeById).put(protect, A, c.updateFee).delete(protect, authorize("superadmin"), c.deleteFee);
+router.post("/:id/pay", protect, A, c.recordPayment);
+module.exports = router;

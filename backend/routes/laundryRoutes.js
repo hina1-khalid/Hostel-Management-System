@@ -1,0 +1,12 @@
+const router = require("express").Router();
+const c = require("../controllers/laundryController");
+const { protect, authorize } = require("../middleware/authMiddleware");
+const A = authorize("admin", "superadmin"), S = authorize("student");
+router.route("/machines").get(protect, authorize("admin", "superadmin", "student"), c.getMachines).post(protect, A, c.createMachine);
+router.route("/machines/:id").put(protect, A, c.updateMachine).delete(protect, A, c.deleteMachine);
+router.route("/slots").get(protect, authorize("admin", "superadmin", "student"), c.getSlots).post(protect, A, c.createSlots);
+router.route("/bookings").get(protect, A, c.getBookings).post(protect, S, c.bookSlot);
+router.get("/bookings/me", protect, S, c.getMyBookings);
+router.delete("/bookings/:id", protect, authorize("admin", "superadmin", "student"), c.cancelBooking);
+router.put("/bookings/:id/status", protect, A, c.updateBookingStatus);
+module.exports = router;

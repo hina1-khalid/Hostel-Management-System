@@ -1,0 +1,16 @@
+const router = require("express").Router();
+const c = require("../controllers/workforceController");
+const { protect, authorize } = require("../middleware/authMiddleware");
+const { validate } = require("../utils/validate");
+const v = require("../validation/schemas");
+const A = authorize("admin", "superadmin");
+router.route("/staff").get(protect, A, c.listStaff).post(protect, A, validate(v.staffMember), c.createStaff);
+router.route("/staff/:id").put(protect, A, c.updateStaff).delete(protect, A, c.deleteStaff);
+router.route("/attendance").get(protect, A, c.attendanceSheet).post(protect, A, validate(v.staffAttendance), c.markAttendance);
+router.get("/attendance/summary", protect, A, c.attendanceSummary);
+router.get("/payroll", protect, A, c.listPayroll);
+router.post("/payroll/generate", protect, A, validate(v.payrollGenerate), c.generatePayroll);
+router.put("/payroll/:id", protect, A, validate(v.payrollAdjust), c.adjustPayroll);
+router.post("/payroll/:id/pay", protect, A, c.payPayroll);
+router.get("/payroll/:id/payslip", protect, A, c.payslip);
+module.exports = router;

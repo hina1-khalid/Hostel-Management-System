@@ -1,0 +1,11 @@
+const router = require("express").Router();
+const c = require("../controllers/visitorController");
+const { protect, authorize } = require("../middleware/authMiddleware");
+const { validate } = require("../utils/validate");
+const v = require("../validation/schemas");
+router.route("/").get(protect, authorize("admin", "superadmin", "security"), c.getVisitors).post(protect, authorize("security"), validate(v.registerVisitor), c.registerVisitor);
+router.get("/me", protect, authorize("student"), c.getMyVisitors);
+router.put("/:id/decision", protect, authorize("admin", "superadmin", "student"), c.decideVisitor);
+router.post("/:id/check-in", protect, authorize("security"), c.checkInVisitor);
+router.post("/:id/check-out", protect, authorize("security"), c.checkOutVisitor);
+module.exports = router;

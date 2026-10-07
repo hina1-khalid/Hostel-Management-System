@@ -1,0 +1,10 @@
+const router = require("express").Router();
+const c = require("../controllers/roomController");
+const { protect, authorize } = require("../middleware/authMiddleware");
+const { validate } = require("../utils/validate");
+const v = require("../validation/schemas");
+const A = authorize("admin", "superadmin");
+router.route("/").get(protect, A, c.getRooms).post(protect, A, validate(v.createRoom), c.createRoom);
+router.get("/available/:hostelId", protect, A, c.getAvailableRooms);
+router.route("/:id").get(protect, A, c.getRoomById).put(protect, A, c.updateRoom).delete(protect, A, c.deleteRoom);
+module.exports = router;

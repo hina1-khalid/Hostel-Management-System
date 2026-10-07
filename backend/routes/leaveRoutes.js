@@ -1,0 +1,11 @@
+const router = require("express").Router();
+const c = require("../controllers/leaveController");
+const { protect, authorize } = require("../middleware/authMiddleware");
+const { validate } = require("../utils/validate");
+const v = require("../validation/schemas");
+const A = authorize("admin", "superadmin");
+router.route("/").get(protect, A, c.getLeaves).post(protect, authorize("student"), validate(v.applyLeave), c.applyLeave);
+router.get("/me", protect, authorize("student"), c.getMyLeaves);
+router.put("/:id/decision", protect, A, c.decideLeave);
+router.delete("/:id", protect, authorize("student", "admin", "superadmin"), c.deleteLeave);
+module.exports = router;

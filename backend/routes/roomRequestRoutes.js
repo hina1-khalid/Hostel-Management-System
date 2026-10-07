@@ -1,0 +1,12 @@
+const router = require("express").Router();
+const c = require("../controllers/roomRequestController");
+const { protect, authorize } = require("../middleware/authMiddleware");
+const { validate } = require("../utils/validate");
+const schemas = require("../validation/schemas");
+const A = authorize("admin", "superadmin"), S = authorize("student");
+router.route("/").get(protect, A, c.getRequests).post(protect, S, validate(schemas.roomRequest), c.createRequest);
+router.get("/me", protect, S, c.getMyRequests);
+router.get("/options", protect, S, c.options);
+router.put("/:id/decision", protect, A, c.decide);
+router.delete("/:id", protect, S, c.cancelRequest);
+module.exports = router;

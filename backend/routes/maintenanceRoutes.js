@@ -1,0 +1,11 @@
+const router = require("express").Router();
+const c = require("../controllers/maintenanceController");
+const { protect, authorize } = require("../middleware/authMiddleware");
+const { validate } = require("../utils/validate");
+const v = require("../validation/schemas");
+const A = authorize("admin", "superadmin");
+router.route("/").get(protect, A, c.list).post(protect, A, validate(v.maintenanceCreate), c.create);
+router.get("/summary", protect, A, c.summary);
+router.route("/:id").put(protect, A, c.update).delete(protect, A, c.remove);
+router.post("/:id/complete", protect, A, validate(v.maintenanceComplete), c.complete);
+module.exports = router;

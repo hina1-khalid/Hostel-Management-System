@@ -1,0 +1,14 @@
+const router = require("express").Router();
+const c = require("../controllers/messFinanceController");
+const { protect, authorize } = require("../middleware/authMiddleware");
+const { validate } = require("../utils/validate");
+const v = require("../validation/schemas");
+const A = authorize("admin", "superadmin");
+router.route("/expenses").get(protect, A, c.listExpenses).post(protect, A, validate(v.messExpense), c.createExpense);
+router.delete("/expenses/:id", protect, A, c.deleteExpense);
+router.route("/stock").get(protect, A, c.listStock).post(protect, A, validate(v.stockItem), c.createItem);
+router.route("/stock/:id").put(protect, A, c.updateItem).delete(protect, A, c.deleteItem);
+router.post("/stock/:id/move", protect, A, validate(v.stockMove), c.moveStock);
+router.get("/stock/:id/history", protect, A, c.stockHistory);
+router.get("/analysis", protect, A, c.analysis);
+module.exports = router;
