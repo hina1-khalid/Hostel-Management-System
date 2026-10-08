@@ -1,10 +1,27 @@
 # Smart Hostel Management System
 
-Full-stack hostel management app (Node.js + Express + MongoDB backend, React + Vite + Tailwind frontend).
+[![CI](https://github.com/hina1-khalid/Hostel-Management-System/actions/workflows/ci.yml/badge.svg)](https://github.com/hina1-khalid/Hostel-Management-System/actions/workflows/ci.yml)
 
-> This project was **rebuilt after a laptop data loss**. The Phase 1–6 backend and the v5 frontend were recovered from
-> backups; Notifications, Inventory, Mess, Laundry, AI Chatbot, Global Search and the remaining frontend pages were
-> re-created from scratch, and known bugs in the old code were fixed (see "What changed" below).
+A full-stack web application that digitises everyday hostel operations: rooms and students, fees, complaints, leave, visitors, QR gate passes, mess, laundry, inventory and staff payroll. It has four user roles (super admin, warden, student, security guard) and an AI assistant.
+
+**Tech stack:** React 18 · Vite · Tailwind CSS · Node.js · Express · MongoDB (Mongoose) · JWT · Zod · Docker · GitHub Actions
+
+## Highlights
+
+- **Role-based access control** with hostel-level scoping: wardens only see and change their own hostel.
+- **Room allocation** with live occupancy, gender checks, room change requests and a waiting list.
+- **QR gate system:** camera scanning, late-entry detection and leave gate passes.
+- **Finance:** fee generation, receipts as PDF, mess cost analysis (cost per meal, profit/loss) and worker payroll with payslip PDFs.
+- **AI features:** chatbot and monthly report using the Claude API, with a rule-based fallback so everything works without an API key.
+- **Security:** hashed passwords, Helmet, rate limiting, input validation (Zod), audit log, protection against IDOR and mass-assignment.
+- **Quality:** automated backend API tests and frontend UI tests, Swagger API docs, Docker Compose and a GitHub Actions CI pipeline.
+- **Installable (PWA)** and Excel export for reports.
+
+## Screenshots
+
+<!-- Add 3 to 4 screenshots here (login, admin dashboard, student view, QR scanner). Example:
+![Admin dashboard](docs/screenshots/dashboard.png)
+-->
 
 ## Quick start
 
@@ -167,6 +184,8 @@ warden saw a Hostels button that returned 403 · API URL is now configurable (`V
 
 ## Notes / next steps
 
+* **Project history:** this project was rebuilt after a laptop data loss. The Phase 1–6 backend and the v5 frontend were recovered from backups; Notifications, Inventory, Mess, Laundry, AI Chatbot, Global Search and the remaining frontend pages were re-created, and known bugs in the old code were fixed (see above).
+
 * The gate scanner supports the device camera, a USB/Bluetooth scanner, or manual entry.
 * Not implemented: SMS, online payments, dark mode.
 * Run `npm run seed:extras` only for demos: the backend tests expect the plain demo data.
@@ -183,7 +202,7 @@ cp .env.example .env          # set JWT_SECRET (and optional SMTP / ANTHROPIC_AP
 docker compose up --build     # app http://localhost:8080 · API http://localhost:5000
 docker compose run --rm backend npm run seed     # first time only: demo data
 ```
-> The Docker files were written carefully but **not executed** in the environment where this project was prepared (no Docker there). The GitHub Actions workflow builds the images on every push, which will confirm them.
+> The Docker build is also checked by the GitHub Actions workflow on every push.
 
 ## Continuous integration
 `.github/workflows/ci.yml` runs on every push: backend tests (against a real MongoDB), frontend build + UI tests, and a Docker build.
